@@ -1,0 +1,10 @@
+{
+  "name": "discussion-exportinator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/gelicia/discussion-exportinator.git",
+  "author": "Kristina Durivage <kristina.durivage@grafana.com>",
+  "license": "MIT",
+  "type": "module",
+  "private": true
+}
