@@ -1,19 +1,36 @@
-import { GITHUB_TOKEN } from './secret.js';
-import { query } from './query.js';
-
-
-const response = fetch('https://api.github.com/graphql', {
-    method: 'POST',
+import { GITHUB_TOKEN } from "./secret.js";
+import { query } from "./query.js";
+let nextPage = true;
+let nextCursor = undefined;
+let cursors = [];
+const now = new Date();
+console.log('title,url,reactionsCount,commentsCount,totalCount,createdDate,oldDiscussion')
+while (nextPage) {
+  const response = fetch("https://api.github.com/graphql", {
+    method: "POST",
     headers: { Authorization: `Bearer ${GITHUB_TOKEN}` },
     body: JSON.stringify({
-      query: query,
+      query: query(nextCursor),
     }),
   }).then((r) => r.json());
 
-  response.then(r => {
-    r.data.search.nodes.forEach(element => {
-        console.log(`${element.title},${element.url},${element.reactions.totalCount},${element.comments.totalCount}`)
+  await response.then((r) => {
+    // console.log(r);
+    nextPage = r.data.search.pageInfo.hasNextPage;
+    nextCursor = r.data.search.pageInfo.endCursor;
+    cursors.push(nextCursor);
+    //    console.log(nextCursor);
+
+    r.data.search.nodes.forEach((element) => {
+
+    const createdDate = new Date(element.createdAt);
+    const oldDisc = createdDate < new Date('2022-04-01T00:00:00Z')
+
+      console.log(
+        `${element.title.replaceAll(",", " ")},${element.url},${element.reactions.totalCount},${element.comments.totalCount},${(element.reactions.totalCount+element.comments.totalCount)},${createdDate.toDateString()},${oldDisc}`
+      );
     });
+  });
 }
-    //console.log(JSON.stringify(r))}
-);
+
+console.log(cursors);

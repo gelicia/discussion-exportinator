@@ -1,12 +1,13 @@
-export const query = 'query ( '+
+export const query = (endCursor) => 'query ( '+
     '$query: String = "repo:grafana/grafana is:OPEN" '+
+    '$after: String '+ (endCursor ? `= "${endCursor}"` : '')+
   ') { '+
-    'search(type: DISCUSSION, last: 100, query: $query) { '+
+    'search(type: DISCUSSION, first: 100, query: $query, after: $after) { '+
       'discussionCount '+
       'nodes { '+
         '... on Discussion { '+
-          'id '+
           'title '+
+          'createdAt '+
           'url '+
           'repository { '+
             'nameWithOwner '+
