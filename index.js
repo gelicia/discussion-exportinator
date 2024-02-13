@@ -3,6 +3,7 @@ import { query } from "./query.js";
 let nextPage = true;
 let nextCursor = undefined;
 let cursors = [];
+let discussionCount = undefined;
 const now = new Date();
 console.log('title,url,reactionsCount,commentsCount,totalCount,createdDate,oldDiscussion,phase')
 while (nextPage) {
@@ -16,6 +17,9 @@ while (nextPage) {
 
   await response.then((r) => {
     // console.log(r);
+    if (discussionCount === undefined) {
+      discussionCount = r.data.search.discussionCount;
+    }
     nextPage = r.data.search.pageInfo.hasNextPage;
     nextCursor = r.data.search.pageInfo.endCursor;
     cursors.push(nextCursor);
@@ -24,7 +28,7 @@ while (nextPage) {
     r.data.search.nodes.forEach((element) => {
 
     const createdDate = new Date(element.createdAt);
-    const oldDisc = createdDate < new Date('2022-04-01T00:00:00Z');
+    const oldDisc = createdDate < new Date('2023-01-01T00:00:00Z');
     const totalEngagements = element.reactions.totalCount+element.comments.totalCount;
 
     let phase = 0;
@@ -47,3 +51,4 @@ while (nextPage) {
 }
 
 console.log(cursors);
+console.log(discussionCount);
