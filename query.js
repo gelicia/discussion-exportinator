@@ -9,9 +9,7 @@ export const query = (endCursor) => 'query ( '+
           'title '+
           'createdAt '+
           'url '+
-          'repository { '+
-            'nameWithOwner '+
-'          } '+
+          'upvoteCount '+
           'reactions { '+
             'totalCount '+
 '          } '+

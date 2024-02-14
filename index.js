@@ -5,7 +5,7 @@ let nextCursor = undefined;
 let cursors = [];
 let discussionCount = undefined;
 const now = new Date();
-console.log('title,url,reactionsCount,commentsCount,totalCount,createdDate,oldDiscussion,phase')
+console.log('title,url,upvoteCount,reactionsCount,commentsCount,totalCount,createdDate,oldDiscussion,phase')
 while (nextPage) {
   const response = fetch("https://api.github.com/graphql", {
     method: "POST",
@@ -29,7 +29,7 @@ while (nextPage) {
 
     const createdDate = new Date(element.createdAt);
     const oldDisc = createdDate < new Date('2023-01-01T00:00:00Z');
-    const totalEngagements = element.reactions.totalCount+element.comments.totalCount;
+    const totalEngagements = element.upvoteCount+element.reactions.totalCount+element.comments.totalCount;
 
     let phase = 0;
 
@@ -44,7 +44,7 @@ while (nextPage) {
     }
 
       console.log(
-        `${element.title.replaceAll(",", " ")},${element.url},${element.reactions.totalCount},${element.comments.totalCount},${totalEngagements},${createdDate.toDateString()},${oldDisc},${phase}`
+        `${element.title.replaceAll(",", " ")},${element.url},${element.upvoteCount},${element.reactions.totalCount},${element.comments.totalCount},${totalEngagements},${createdDate.toDateString()},${oldDisc},${phase}`
       );
     });
   });
