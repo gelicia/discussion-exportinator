@@ -1,11 +1,11 @@
 import { GITHUB_TOKEN } from "./secret.js";
-import { query } from "./query-issue.js";
+import { query } from "./query-discussion.js";
 let nextPage = true;
 let nextCursor = undefined;
 let cursors = [];
 let discussionCount = undefined;
 const now = new Date();
-console.log('title,url,reactionsCount,commentsCount,totalCount,createdDate,daysOld')
+console.log('title,url,upvoteCount,reactionsCount,commentsCount,totalCount,createdDate,oldDiscussion,phase')
 while (nextPage) {
   const response = fetch("https://api.github.com/graphql", {
     method: "POST",
@@ -28,14 +28,27 @@ while (nextPage) {
     r.data.search.nodes.forEach((element) => {
 
     const createdDate = new Date(element.createdAt);
-    const totalEngagements = element.reactions.totalCount+element.comments.totalCount;
+    const oldDisc = createdDate < new Date('2023-01-01T00:00:00Z');
+    const totalEngagements = element.upvoteCount+element.reactions.totalCount+element.comments.totalCount;
 
-    const diff_time = now.getTime() - createdDate.getTime();
-    const diff_days = Math.round(diff_time / (1000 * 3600 * 24));
+    let phase = 0;
+
+    if (totalEngagements >=20) {
+        phase = 1;
+    } else if (totalEngagements >= 10) {
+        phase = 2;
+    } else if (!oldDisc) {
+        phase = 3;
+    } else {
+        phase = 4;
+    }
 
       console.log(
-        `${element.title.replaceAll(",", " ")},${element.url},${element.reactions.totalCount},${element.comments.totalCount},${totalEngagements},${createdDate.toDateString()},${diff_days}`
+        `${element.title.replaceAll(",", " ")},${element.url},${element.upvoteCount},${element.reactions.totalCount},${element.comments.totalCount},${totalEngagements},${createdDate.toDateString()},${oldDisc},${phase}`
       );
     });
   });
 }
+
+console.log(cursors);
+console.log(discussionCount);
