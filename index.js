@@ -5,7 +5,7 @@ let nextCursor = undefined;
 let cursors = [];
 let discussionCount = undefined;
 const now = new Date();
-console.log('title,url,reactionsCount,commentsCount,totalCount,createdDate,daysOld')
+console.log('title,url,reactionsCount,commentsCount,totalCount,createdDaysOld,updatedDaysOld')
 while (nextPage) {
   const response = fetch("https://api.github.com/graphql", {
     method: "POST",
@@ -28,13 +28,17 @@ while (nextPage) {
     r.data.search.nodes.forEach((element) => {
 
     const createdDate = new Date(element.createdAt);
+    const updatedDate = new Date(element.updatedAt);
     const totalEngagements = element.reactions.totalCount+element.comments.totalCount;
 
-    const diff_time = now.getTime() - createdDate.getTime();
-    const diff_days = Math.round(diff_time / (1000 * 3600 * 24));
+    const diffCreatedTime = now.getTime() - createdDate.getTime();
+    const diffCreatedDays = Math.round(diffCreatedTime / (1000 * 3600 * 24));
+
+    const diffUpdatedTime = now.getTime() - updatedDate.getTime();
+    const diffUpdatedDays = Math.round(diffUpdatedTime / (1000 * 3600 * 24));
 
       console.log(
-        `${element.title.replaceAll(",", " ")},${element.url},${element.reactions.totalCount},${element.comments.totalCount},${totalEngagements},${createdDate.toDateString()},${diff_days}`
+        `${element.title.replaceAll(",", " ")},${element.url},${element.reactions.totalCount},${element.comments.totalCount},${totalEngagements},${diffCreatedDays},${diffUpdatedDays}`
       );
     });
   });

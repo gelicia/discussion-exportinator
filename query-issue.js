@@ -8,6 +8,7 @@ export const query = (endCursor) => 'query ( '+
         '... on Issue { '+
           'title '+
           'createdAt '+
+          'updatedAt '+
           'url '+
           'reactions { '+
             'totalCount '+
